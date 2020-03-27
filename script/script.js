@@ -1,15 +1,20 @@
 import galleryItems from "./gallery-items.js";
 
 const gallery = document.querySelector(".js-gallery");
+const lightBox = document.querySelector("div.lightbox");
+const lightBoxImg = document.querySelector("img.lightbox__image");
+const closeButton = document.querySelector(
+  'button[data-action="close-lightbox"]'
+);
+const galleryItem = gallery.children;
 
-function createListItem(data) {
+let index;
+let imgSrc;
+
+galleryItems.forEach(data =>
   gallery.insertAdjacentHTML(
     "beforeend",
     `<li class="gallery__item">
-    <a
-      class="gallery__link"
-      href="${data.original}"
-    >
       <img
         class="gallery__image"
         src="${data.preview}"
@@ -18,42 +23,67 @@ function createListItem(data) {
       />
     </a>
   </li>`
-  );
+  )
+);
+
+for (let i = 0; i < galleryItem.length; i++) {
+  galleryItem[i].addEventListener("click", () => {
+    index = i;
+    changeImage();
+    openImage();
+  });
 }
 
-galleryItems.forEach(createListItem);
+function openImage() {
+  lightBox.classList.add("is-open");
+}
 
-gallery.addEventListener("click", event => {
-  event.preventDefault();
-  openModalWindow(event.target);
-});
+function changeImage() {
+  imgSrc = galleryItem[index].querySelector("img").getAttribute("data-source");
+  lightBoxImg.src = imgSrc;
+}
 
-function openModalWindow(target) {
-  document.querySelector("div.lightbox").classList.add("is-open");
-  document
-    .querySelector("img.lightbox__image")
-    .setAttribute("src", target.dataset.source);
+function closeModalWindow() {
+  lightBox.classList.remove("is-open");
 }
 
 document
-  .querySelector('button[data-action="close-lightbox"]')
-  .addEventListener("click", closeOpenModalWindow);
+  .querySelector("div.lightbox__content")
+  .addEventListener("click", event => {
+    if (event.currentTarget !== event.target) {
+      return;
+    }
+    closeModalWindow();
+  });
 
-document
-  .querySelector(".lightbox__overlay")
-  .addEventListener("click", closeOpenModalWindow);
+closeButton.addEventListener("click", closeModalWindow);
 
-document.onkeydown = evt => {
-  if (evt.keyCode == 27) {
-    closeOpenModalWindow();
-  } else if (evt.keyCode == 37) {
-    changeImage("left");
-  } else if (evt.keyCode == 39) {
-    changeImage("right");
+document.onkeydown = event => {
+  if (event.code == 'ArrowRight') {
+    next();
+  }
+  if (event.code == 'ArrowLeft') {
+    prev();
+  }
+  if (event.code == 'Escape') {
+    closeModalWindow();
   }
 };
 
-function closeOpenModalWindow() {
-  document.querySelector("img.lightbox__image").setAttribute("src", "");
-  document.querySelector("div.lightbox").classList.remove("is-open");
+function next() {
+  if (index == galleryItem.length - 1) {
+    index = 0;
+  } else {
+    index++;
+  }
+  changeImage();
+}
+
+function prev() {
+  if (index == 0) {
+    index = galleryItem.length - 1;
+  } else {
+    index--;
+  }
+  changeImage();
 }
