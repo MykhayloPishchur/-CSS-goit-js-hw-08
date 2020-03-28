@@ -15,6 +15,10 @@ galleryItems.forEach(data =>
   gallery.insertAdjacentHTML(
     "beforeend",
     `<li class="gallery__item">
+    <a
+    class="gallery__link"
+    href='${data.original}'
+  >
       <img
         class="gallery__image"
         src="${data.preview}"
@@ -27,7 +31,8 @@ galleryItems.forEach(data =>
 );
 
 for (let i = 0; i < galleryItem.length; i++) {
-  galleryItem[i].addEventListener("click", () => {
+  galleryItem[i].addEventListener("click", event => {
+    event.preventDefault();
     index = i;
     changeImage();
     openImage();
@@ -59,14 +64,18 @@ document
 closeButton.addEventListener("click", closeModalWindow);
 
 document.onkeydown = event => {
-  if (event.code == 'ArrowRight') {
-    next();
-  }
-  if (event.code == 'ArrowLeft') {
-    prev();
-  }
-  if (event.code == 'Escape') {
-    closeModalWindow();
+  if (imgSrc) {
+    if (event.code == "ArrowRight") {
+      next();
+    }
+    if (event.code == "ArrowLeft") {
+      prev();
+    }
+    if (event.code == "Escape") {
+      closeModalWindow();
+    }
+  } else {
+    return
   }
 };
 
