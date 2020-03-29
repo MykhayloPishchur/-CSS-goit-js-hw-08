@@ -49,6 +49,7 @@ function changeImage() {
 }
 
 function closeModalWindow() {
+  lightBoxImg.src = "";
   lightBox.classList.remove("is-open");
 }
 
@@ -75,7 +76,7 @@ document.onkeydown = event => {
       closeModalWindow();
     }
   } else {
-    return
+    return;
   }
 };
 
